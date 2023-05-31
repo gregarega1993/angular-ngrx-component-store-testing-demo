@@ -66,7 +66,7 @@ describe('MoviesStore', () => {
 
     it('should update the state with an error message if an error occurs', (done: DoneFn) => {
       // Given
-      const error: string = 'An error occurred';
+      const error = 'An error occurred';
       moviesServiceSpy.getMovies.and.returnValue(
         throwError(() => new Error(error))
       );

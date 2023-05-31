@@ -7,8 +7,6 @@ import { Movie } from '../interfaces/movie.interface';
   providedIn: 'root',
 })
 export class MoviesService {
-  constructor() {}
-
   getMovies(): Observable<Movie[]> {
     return of([
       { title: 'Titanic' },
