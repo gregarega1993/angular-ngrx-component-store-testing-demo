@@ -5,9 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  template: ``,
+  styles: [],
 })
-export class AppComponent {
-  title = 'angular-ngrx-component-store-testing-example';
-}
+export class AppComponent {}
