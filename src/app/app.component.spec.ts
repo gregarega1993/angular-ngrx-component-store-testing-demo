@@ -1,15 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { MoviesStore } from './data-access/movies.store';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { By } from '@angular/platform-browser';
+
+import { MoviesStore } from './movies.store';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  const mockMoviesStore = jasmine.createSpyObj('MoviesStore', ['getMovies']);
+  const mockMoviesStore = jasmine.createSpyObj('MoviesStore', [
+    'getMovies',
+    'addMovie',
+  ]);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent, BrowserAnimationsModule],
     });
     TestBed.overrideProvider(MoviesStore, { useValue: mockMoviesStore });
     fixture = TestBed.createComponent(AppComponent);
@@ -25,6 +31,28 @@ describe('AppComponent', () => {
     it('should call the moviesStore.getMovies() method', () => {
       component.ngOnInit();
       expect(mockMoviesStore.getMovies).toHaveBeenCalled();
-    })
-  })
+    });
+  });
+
+  describe('addMovie() method', () => {
+    it('should call the moviesStore.addMovie() method with value from the form control', () => {
+      const movie = 'Fake movie title';
+      component.addMovie(movie);
+      expect(mockMoviesStore.addMovie).toHaveBeenCalledWith(movie);
+    });
+  });
+
+  describe('When the Add movie button is clicked', () => {
+    it('the addMovie() method should be called', () => {
+      // Given
+      spyOn(component, 'addMovie');
+      const movie = 'Fake movie title';
+      component.movieControl.patchValue(movie);
+      const addMovieButton = fixture.debugElement.query(By.css('button'));
+      // When
+      addMovieButton.nativeElement.click();
+      // Then
+      expect(component.addMovie).toHaveBeenCalledWith(movie);
+    });
+  });
 });

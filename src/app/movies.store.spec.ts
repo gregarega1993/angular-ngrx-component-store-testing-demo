@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { MoviesState, MoviesStore } from './movies.store';
-import { Movie } from '../interfaces/movie.interface';
-import { MoviesService } from './movies.service';
 import { of, skip, take, throwError } from 'rxjs';
+
+import { MoviesState, MoviesStore } from './movies.store';
+import { MoviesService } from './movies.service';
 
 describe('MoviesStore', () => {
   let moviesStore: MoviesStore;
@@ -33,12 +33,12 @@ describe('MoviesStore', () => {
   describe('movies$ selector', () => {
     it('should return movies from state', (done: DoneFn) => {
       // Given
-      const movies: Movie[] = getFakeMovies();
+      const movies: string[] = getFakeMovies();
       moviesStore.patchState({ movies });
 
       // Then
       moviesStore.movies$.pipe().subscribe({
-        next: (movies: Movie[]) => {
+        next: (movies: string[]) => {
           expect(movies.length).toBe(movies.length);
           done();
         },
@@ -49,7 +49,7 @@ describe('MoviesStore', () => {
   describe('getMovies() method', () => {
     it('should update the state with the returned movies', (done: DoneFn) => {
       // Given
-      const movies: Movie[] = getFakeMovies();
+      const movies: string[] = getFakeMovies();
       moviesServiceSpy.getMovies.and.returnValue(of(movies));
 
       // Then
@@ -83,12 +83,26 @@ describe('MoviesStore', () => {
       moviesStore.getMovies();
     });
   });
+
+  describe('addMovie() method', () => {
+    it('should update the movies state with the added movie', (done: DoneFn) => {
+      // Given
+      const movie = 'Fake movie title';
+
+      // Then
+      moviesStore.state$.pipe(skip(1), take(1)).subscribe({
+        next: (state: MoviesState) => {
+          expect(state.movies).toEqual([movie]);
+          done();
+        },
+      });
+
+      // When
+      moviesStore.addMovie(movie);
+    });
+  });
 });
 
-export function getFakeMovies(): Movie[] {
-  return [
-    { title: 'Titanic' },
-    { title: 'Harry Potter' },
-    { title: 'Lord Of The Rings' },
-  ];
+export function getFakeMovies(): string[] {
+  return ['Titanic', 'Harry Potter', 'Lord Of The Rings'];
 }

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { take } from 'rxjs';
 
 import { MoviesService } from './movies.service';
-import { Movie } from '../interfaces/movie.interface';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -16,15 +16,18 @@ describe('MoviesService', () => {
   });
 
   it('should return movies', (done: DoneFn) => {
-    const expectedMovies: Movie[] = [
-      { title: 'Titanic' },
-      { title: 'Harry Potter' },
-      { title: 'Lord Of The Rings' },
+    const expectedMovies: string[] = [
+      'Titanic',
+      'Harry Potter',
+      'Lord Of The Rings',
     ];
 
-    service.getMovies().subscribe((movies: Movie[]) => {
-      expect(movies).toEqual(expectedMovies);
-      done();
-    });
+    service
+      .getMovies()
+      .pipe(take(1))
+      .subscribe((movies: string[]) => {
+        expect(movies).toEqual(expectedMovies);
+        done();
+      });
   });
 });

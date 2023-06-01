@@ -3,17 +3,16 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Observable, exhaustMap } from 'rxjs';
 
-import { Movie } from '../interfaces/movie.interface';
 import { MoviesService } from './movies.service';
 
 export interface MoviesState {
-  movies: Movie[];
+  movies: string[];
   moviesError: string | null;
 }
 
 @Injectable()
 export class MoviesStore extends ComponentStore<MoviesState> {
-  readonly movies$: Observable<Movie[]> = this.select((state) => state.movies);
+  readonly movies$: Observable<string[]> = this.select((state) => state.movies);
 
   constructor(private moviesService: MoviesService) {
     super({ movies: [], moviesError: null });
@@ -24,7 +23,7 @@ export class MoviesStore extends ComponentStore<MoviesState> {
       exhaustMap(() =>
         this.moviesService.getMovies().pipe(
           tapResponse(
-            (movies: Movie[]) => this.patchState({ movies }),
+            (movies: string[]) => this.patchState({ movies }),
             (error: HttpErrorResponse) =>
               this.patchState({ moviesError: error.message })
           )
@@ -32,4 +31,9 @@ export class MoviesStore extends ComponentStore<MoviesState> {
       )
     )
   );
+
+  readonly addMovie = this.updater((state, movie: string) => ({
+    ...state,
+    movies: [...state.movies, movie],
+  }));
 }
